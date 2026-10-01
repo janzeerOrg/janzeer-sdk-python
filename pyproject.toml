@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-authors = [{ name = "Janzeer", email = "janzeeer@proton.me" }]
+authors = [{ name = "Janzeer", email = "info@janzeer.org" }]
 keywords = ["janzeer", "blockchain", "sdk", "wallet", "json-rpc"]
 classifiers = [
   "Development Status :: 4 - Beta",
