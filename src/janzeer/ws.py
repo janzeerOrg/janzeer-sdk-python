@@ -7,6 +7,7 @@ and re-issues every live subscription, so a handler keeps receiving events acros
 from __future__ import annotations
 
 import asyncio
+import functools
 import itertools
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Any
@@ -52,6 +53,10 @@ class JanzeerRpcWs(RpcMethods):
         self._ws: Any = None
         self._reader: asyncio.Task[None] | None = None
         self._pending: dict[int, asyncio.Future[Any]] = {}
+        # Run when the answer of a call arrives, inside the reader, BEFORE the next message is handled. A subscription
+        # is registered this way: a notification can follow its subscribe answer in the same batch of frames, and it
+        # must find the subscription already known.
+        self._hooks: dict[int, Callable[[Any], None]] = {}
         self._subs: dict[str, Subscription] = {}
         self._ids = itertools.count(1)
         self._closed = False
@@ -124,8 +129,7 @@ class JanzeerRpcWs(RpcMethods):
         count = 0
         for s in old:
             try:
-                s.id = str(await self.call("janzeer_subscribe", {"kind": s.kind, "params": s._params}))
-                self._subs[s.id] = s
+                await self.call("janzeer_subscribe", {"kind": s.kind, "params": s._params}, _hook=functools.partial(self._register, s))
                 count += 1
             except Exception as e:
                 self._emit({"type": "error", "error": e})
@@ -153,6 +157,9 @@ class JanzeerRpcWs(RpcMethods):
                 continue
             mid = m.get("id")
             fut = self._pending.pop(mid, None) if isinstance(mid, int) else None
+            hook = self._hooks.pop(mid, None) if isinstance(mid, int) else None
+            if hook is not None and not m.get("error"):
+                hook(m.get("result"))
             if fut is None or fut.done():
                 continue
             if m.get("error"):
@@ -165,8 +172,9 @@ class JanzeerRpcWs(RpcMethods):
             if not fut.done():
                 fut.set_exception(err)
         self._pending.clear()
+        self._hooks.clear()
 
-    async def call(self, method: str, params: Any = None, *, then: Callable[[Any], Any] | None = None) -> Any:
+    async def call(self, method: str, params: Any = None, *, then: Callable[[Any], Any] | None = None, _hook: Callable[[Any], None] | None = None) -> Any:
         if self._ws is None:
             await self._open()
         id_ = next(self._ids)
@@ -175,6 +183,8 @@ class JanzeerRpcWs(RpcMethods):
             req["params"] = params
         fut: asyncio.Future[Any] = asyncio.get_running_loop().create_future()
         self._pending[id_] = fut
+        if _hook is not None:
+            self._hooks[id_] = _hook
         try:
             await self._ws.send(_json.dumps(req))
             out = await asyncio.wait_for(fut, self._timeout)
@@ -188,14 +198,19 @@ class JanzeerRpcWs(RpcMethods):
             raise NetworkError(f"send failed: {e}") from e
         finally:
             self._pending.pop(id_, None)
+            self._hooks.pop(id_, None)
         return then(out) if then else out
 
     async def _subscribe(self, kind: str, params: Any, handler: Handler) -> Subscription:
         if len(self._subs) >= LIMITS["subscriptions_per_session"]:
             raise ValueError(f"at most {LIMITS['subscriptions_per_session']} subscriptions per session")
-        sub = Subscription(self, str(await self.call("janzeer_subscribe", {"kind": kind, "params": params})), kind, params, handler)
-        self._subs[sub.id] = sub
+        sub = Subscription(self, "", kind, params, handler)
+        await self.call("janzeer_subscribe", {"kind": kind, "params": params}, _hook=functools.partial(self._register, sub))
         return sub
+
+    def _register(self, sub: Subscription, result: Any) -> None:
+        sub.id = str(result)
+        self._subs[sub.id] = sub
 
     async def _unsubscribe(self, sub: Subscription) -> bool:
         self._subs.pop(sub.id, None)

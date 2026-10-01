@@ -14,4 +14,6 @@ First release, for node 0.1.0 (API 1.1.0, protocol 3.4.0).
   `addressActivity` subscriptions and automatic resubscription.
 - Flows: `next_nonce`, `wait_for_finality`, `send_and_wait` and their async twins.
 - Vault: PBKDF2-HMAC-SHA256 (250,000 rounds) + AES-256-GCM, interoperable with the TypeScript, Dart and Kotlin SDKs.
+- WebSocket: a subscription is registered when its answer is read, so a notification sent right behind the answer is
+  never dropped.
 - Conformance: all vectors (format v2) and the 14-step end-to-end flow.
