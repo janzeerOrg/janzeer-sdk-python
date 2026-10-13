@@ -26,7 +26,7 @@ VALIDATOR_DEPOSIT: Final = "2000"
 TOKEN_CREATE_FEE: Final = "5"
 
 #: The node / API / wire-protocol versions this SDK release was built and tested against.
-SPEC_VERSION: Final[Mapping[str, object]] = MappingProxyType({"node": "0.1.1", "api": "1.1.0", "protocol": "3.4.0", "vectors": 2})
+SPEC_VERSION: Final[Mapping[str, object]] = MappingProxyType({"node": "0.1.2", "api": "1.1.0", "protocol": "3.4.0", "vectors": 2})
 
 
 class TokenOp:
