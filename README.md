@@ -81,7 +81,7 @@ errors are typed classes; the package ships `py.typed`.
 
 | SDK | Node | REST envelope `version` | Wire protocol | Vectors |
 |---|---|---|---|---|
-| 0.1.x | 0.1.2 | 1.1.0 | 3.4.0 | v2 |
+| 0.1.x | 0.1.3 | 1.1.0 | 3.4.0 | v2 |
 
 `SPEC_VERSION` exports these values; the e2e test checks them against the node on the first call.
 
