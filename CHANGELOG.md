@@ -3,6 +3,10 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Examples: `examples/06_watch_new_blocks.py` streams newly finalized blocks over the WebSocket.
+
 ## 0.1.0 — 2026-10-01
 
 First release, for node 0.1.0 (API 1.1.0, protocol 3.4.0).

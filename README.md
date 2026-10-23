@@ -87,9 +87,9 @@ errors are typed classes; the package ships `py.typed`.
 
 ## Examples
 
-Runnable scripts in [`examples/`](examples): a transfer to finality, an address-activity subscription, the token
-life cycle, a validator registration, and a vault round trip. They read the `JANZEER_*` environment variables
-described in [CONTRIBUTING](CONTRIBUTING.md).
+Runnable scripts in [`examples/`](examples): a transfer to finality, an address-activity subscription, a
+new-blocks subscription, the token life cycle, a validator registration, and a vault round trip. They read the
+`JANZEER_*` environment variables described in [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Conformance
 
