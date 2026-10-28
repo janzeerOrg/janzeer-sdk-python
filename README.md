@@ -12,11 +12,12 @@ verifies.
 pip install janzeer-sdk            # add [ws] for WebSocket subscriptions: pip install "janzeer-sdk[ws]"
 ```
 
-> **Not on PyPI yet.** The package follows shortly after the mainnet launch. Until then, install from the repository:
->
-> ```bash
-> pip install "janzeer-sdk[ws] @ git+https://github.com/janzeerorg/janzeer-sdk-python"
-> ```
+Releases are published to PyPI from this repository's GitHub releases (trusted publishing, no stored token). To install the
+development head instead:
+
+```bash
+pip install "janzeer-sdk[ws] @ git+https://github.com/janzeerorg/janzeer-sdk-python"
+```
 
 ## 60-second quickstart
 
