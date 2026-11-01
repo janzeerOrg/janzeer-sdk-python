@@ -55,7 +55,7 @@ from .tx import SignedTx, TxBuilder, UnsignedTx
 from .vault import VaultError, decrypt_vault, encrypt_vault
 from .ws import JanzeerRpcWs, Subscription
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "Account", "mnemonic", "TxBuilder", "UnsignedTx", "SignedTx",
