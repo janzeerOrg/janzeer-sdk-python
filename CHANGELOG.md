@@ -3,6 +3,14 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.2 — 2026-11-04
+
+No API change; node pin unchanged (**0.1.11**, API 1.1.0, protocol 3.4.0).
+
+- Examples: `examples/06_watch_new_blocks.py` streams newly finalized blocks over the WebSocket (`newBlocks`
+  subscription) — contributed by [@SakarPaisen](https://github.com/SakarPaisen) (#2, closes #1). The timeout path catches
+  `asyncio.TimeoutError`, which is what `asyncio.wait_for` raises on Python 3.10.
+
 ## 0.1.1 — 2026-11-01
 
 No API change. `SPEC_VERSION["node"]` is **0.1.11** (node maintenance release: the `jz` command-line client ships in the
