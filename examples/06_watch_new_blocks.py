@@ -32,7 +32,7 @@ async def main() -> None:
         print("subscribed", sub.id, "waiting for", MAX_BLOCKS, "blocks")
         try:
             await asyncio.wait_for(done, TIMEOUT)
-        except TimeoutError:
+        except asyncio.TimeoutError:
             print("timed out after", TIMEOUT, "s")
         await sub.unsubscribe()
 
