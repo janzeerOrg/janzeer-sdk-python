@@ -3,6 +3,11 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Docs/examples: `examples/07_async_quickstart_transfer.py` and [docs/asyncio.md](docs/asyncio.md) show the end-to-end
+  asyncio path (`AsyncJanzeerClient` → sign → submit → `await_finality`). (#3)
+
 ## 0.1.2 — 2026-11-04
 
 No API change; node pin unchanged (**0.1.11**, API 1.1.0, protocol 3.4.0).
