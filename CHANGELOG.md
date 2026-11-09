@@ -3,6 +3,10 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.3 — 2026-11-09
+
+No API change. `SPEC_VERSION["node"]` is **0.1.12** (node critical fix F-058: GraalVM native nodes could not sync across a block carrying a token transaction, fixed in 0.1.12 with a build-time guard; API 1.1.0 / protocol 3.4.0 unchanged).
+
 ## 0.1.2 — 2026-11-04
 
 No API change; node pin unchanged (**0.1.11**, API 1.1.0, protocol 3.4.0).
