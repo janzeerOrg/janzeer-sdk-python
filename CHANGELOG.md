@@ -3,6 +3,10 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.5 — 2026-11-11
+
+No API change. `SPEC_VERSION["node"]` is **0.1.13** (node hardening release after a full review: a peer is counted only under the key it proved in the handshake, a next-slot vote no longer discards the current slot, one reward transaction per block, format checks at intake, rate limit on `/rpc/ws`; API 1.1.0 / protocol 3.4.0 unchanged, rolling upgrade).
+
 ## 0.1.4 — 2026-11-11
 
 Reliability fixes from a code review. Node pin unchanged (**0.1.12**, API 1.1.0 / protocol 3.4.0). No API change.
