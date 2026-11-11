@@ -38,6 +38,10 @@ class Subscription:
 
     def __init__(self, client: JanzeerRpcWs, id: str, kind: str, params: Any, handler: Handler) -> None:
         self._client, self.id, self.kind, self._params, self._handler = client, id, kind, params, handler
+        #: newBlocks only: height of the last block handed to the handler — where a resubscribe resumes
+        self._last_height: int | None = None
+        #: True while the server-side subscription must be re-created (set on reconnect, cleared when the call succeeds)
+        self._stale = False
 
     async def unsubscribe(self) -> bool:
         return await self._client._unsubscribe(self)
@@ -61,6 +65,7 @@ class JanzeerRpcWs(RpcMethods):
         self._ids = itertools.count(1)
         self._closed = False
         self._open_lock = asyncio.Lock()
+        self._resub_retry: asyncio.Task[None] | None = None
 
     @classmethod
     async def connect(cls, url: str, **options: Any) -> JanzeerRpcWs:
@@ -121,20 +126,48 @@ class JanzeerRpcWs(RpcMethods):
                 await self._open()
             except NetworkError:
                 continue
+            for s in self._subs.values():
+                s._stale = True  # the server forgot them with the old socket
             await self._resubscribe()
 
     async def _resubscribe(self) -> None:
-        old = list(self._subs.values())
-        self._subs.clear()
-        count = 0
-        for s in old:
+        """Re-create every stale subscription. One that fails stays registered (and stale) and is tried again — it
+        used to be dropped for good, with an ``error`` event as the only trace."""
+        count = failed = 0
+        for s in [x for x in self._subs.values() if x._stale]:
+            if not s._stale or self._subs.get(s.id) is not s:  # unsubscribed meanwhile, or done by a parallel pass
+                continue
             try:
-                await self.call("janzeer_subscribe", {"kind": s.kind, "params": s._params}, _hook=functools.partial(self._register, s))
+                await self.call("janzeer_subscribe", {"kind": s.kind, "params": self._resume_params(s)}, _hook=functools.partial(self._reregister, s, s.id))
                 count += 1
             except Exception as e:
+                failed += 1
                 self._emit({"type": "error", "error": e})
         if count:
             self._emit({"type": "resubscribed", "count": count})
+        if failed and not self._closed and (self._resub_retry is None or self._resub_retry.done()):
+            # still connected: try the rest again shortly (a new reconnect marks everything stale and runs this anyway)
+            self._resub_retry = asyncio.create_task(self._retry_resubscribe())
+
+    async def _retry_resubscribe(self) -> None:
+        await asyncio.sleep(2.0)
+        if self._ws is not None and not self._closed:
+            self._resub_retry = None
+            await self._resubscribe()
+
+    @staticmethod
+    def _resume_params(s: Subscription) -> Any:
+        """A newBlocks stream resumes right after the last block it delivered: the original ``fromHeight`` would replay
+        every block again, and without one the blocks committed during the outage would be skipped."""
+        if s.kind != "newBlocks" or s._last_height is None or not isinstance(s._params, dict):
+            return s._params
+        return {**s._params, "fromHeight": s._last_height + 1}
+
+    def _reregister(self, sub: Subscription, old_id: str, result: Any) -> None:
+        if self._subs.get(old_id) is sub:
+            del self._subs[old_id]
+        sub._stale = False
+        self._register(sub, result)
 
     def _on_message(self, text: str) -> None:
         try:
@@ -148,8 +181,13 @@ class JanzeerRpcWs(RpcMethods):
                 p = m["params"]
                 sub = self._subs.get(str(p.get("subscription")))
                 if sub is not None and "result" in p:
+                    result = p["result"]
+                    if sub.kind == "newBlocks" and isinstance(result, dict) and isinstance(result.get("height"), int):
+                        if sub._last_height is not None and result["height"] <= sub._last_height:
+                            continue  # replay overlap: exactly once by height
+                        sub._last_height = result["height"]
                     try:
-                        out = sub._handler(p["result"])
+                        out = sub._handler(result)
                         if asyncio.iscoroutine(out):
                             asyncio.create_task(out)
                     except Exception as e:
@@ -237,6 +275,8 @@ class JanzeerRpcWs(RpcMethods):
     async def close(self) -> None:
         """Close the socket; no reconnect. Pending calls fail, subscriptions are dropped."""
         self._closed = True
+        if self._resub_retry is not None:
+            self._resub_retry.cancel()
         self._subs.clear()
         ws, self._ws = self._ws, None
         if ws is not None:

@@ -13,7 +13,8 @@ from decimal import Decimal
 from .constants import DECIMALS, TICKER
 
 _SCALE = 10**DECIMALS
-_DECIMAL_RE = re.compile(r"^-?(\d+)(?:\.(\d+))?$")
+# ASCII digits only: a bare \d also matches Arabic-Indic and other Unicode digits, which the node and the other SDKs reject
+_DECIMAL_RE = re.compile(r"^-?([0-9]+)(?:\.([0-9]+))?$")
 
 #: Amount input accepted everywhere: a decimal string (preferred), an ``int`` of whole coins, or a ``Decimal``.
 AmountLike = str | int | Decimal

@@ -44,10 +44,16 @@ def wait_for_finality(source: JanzeerClient | RpcMethods, hash: str, *, timeout:
     last: dict[str, Any] | None = None
     while time.monotonic() < deadline:
         if isinstance(source, JanzeerClient):
-            for name in _REST_COLLECTIONS:
-                last = _rest_view(getattr(source, name).get(hash))
-                if last:
-                    break
+            # The transaction was already accepted: a dropped poll is retried until the deadline (as in the RPC branch),
+            # so a transport hiccup never surfaces as what looks like a failed send.
+            try:
+                for name in _REST_COLLECTIONS:
+                    last = _rest_view(getattr(source, name).get(hash))
+                    if last:
+                        break
+            except NetworkError:
+                time.sleep(1.0)
+                continue
             if last and last["status"] == "FINAL":
                 return last
             time.sleep(poll)
@@ -70,10 +76,14 @@ async def await_finality(source: AsyncJanzeerClient | RpcMethods, hash: str, *, 
     last: dict[str, Any] | None = None
     while time.monotonic() < deadline:
         if isinstance(source, AsyncJanzeerClient):
-            for name in _REST_COLLECTIONS:
-                last = _rest_view(await getattr(source, name).get(hash))
-                if last:
-                    break
+            try:
+                for name in _REST_COLLECTIONS:
+                    last = _rest_view(await getattr(source, name).get(hash))
+                    if last:
+                        break
+            except NetworkError:
+                await asyncio.sleep(1.0)
+                continue
             if last and last["status"] == "FINAL":
                 return last
             await asyncio.sleep(poll)

@@ -32,6 +32,14 @@ def test_garbage_is_refused():
     assert is_valid_amount("1.123456789") is False and is_valid_amount("1.12345678") is True
 
 
+def test_only_ascii_digits_are_amounts():
+    # \d in a str pattern also matches Arabic-Indic and other Unicode digits; the node and the other SDKs refuse them
+    for bad in ("١٠", "1٫5", "１２", "۱۰.۵"):
+        with pytest.raises(ValueError):
+            normalize_amount(bad)
+        assert not is_valid_amount(bad)
+
+
 def test_round_trip_and_arithmetic():
     assert from_scaled(150_000_000) == "1.50000000" and from_scaled(-1) == "-0.00000001"
     assert add_amounts("0.1", "0.2") == "0.30000000"          # the sum a float gets wrong
