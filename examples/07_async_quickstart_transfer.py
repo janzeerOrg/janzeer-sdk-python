@@ -6,7 +6,7 @@ Reads the JANZEER_* environment (see CONTRIBUTING.md).
 import asyncio
 import os
 
-from janzeer import Account, AsyncJanzeerClient, AsyncJanzeerRpc, TxBuilder, format_jnz, await_finality
+from janzeer import Account, AsyncJanzeerClient, AsyncJanzeerRpc, TxBuilder, await_finality, format_jnz
 
 NODE = os.environ.get("JANZEER_NODE_URL", "http://localhost:7019")
 RPC_URL = os.environ.get("JANZEER_RPC_URL", NODE)

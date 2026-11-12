@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "janzeer-sdk"
-version = "0.1.5"
+version = "0.1.6"
 description = "Official Python SDK of the Janzeer blockchain: wallet keys and signing, transaction builders, REST, JSON-RPC and WebSocket clients."
 readme = "README.md"
 requires-python = ">=3.10"
