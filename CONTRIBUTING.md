@@ -36,3 +36,7 @@ Against any other network set `JANZEER_NODE_URL`, `JANZEER_RPC_URL`, `JANZEER_WS
 - Every new node method gets a wrapper in `rpc.py` or `rest.py`, a unit test with a mocked transport, and a line in
   `CHANGELOG.md`.
 - Public API says *validator*; the node's internal word *promoter* does not appear in it.
+
+## Bounties
+
+Some issues carry a bounty paid in JNZ: see [BOUNTIES.md](BOUNTIES.md).
