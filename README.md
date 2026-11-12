@@ -43,7 +43,7 @@ That is the whole integration: derive → nonce → build → sign → submit �
 (2f+1 BFT commit), so there is no confirmation count.
 
 The same with `asyncio`: `AsyncJanzeerClient`, `AsyncJanzeerRpc`, `JanzeerRpcWs` and `await_finality` have the same
-methods and return awaitables.
+methods and return awaitables. See [asyncio](docs/asyncio.md).
 
 ## What is in the box
 
@@ -54,9 +54,10 @@ methods and return awaitables.
 | Amounts | `to_scaled`, `from_scaled`, `format_jnz`, `parse_jnz`, `add_amounts`… | [sending-transactions](docs/sending-transactions.md#amounts) |
 | REST | `JanzeerClient` / `AsyncJanzeerClient`: balances, nonces, transactions, blocks, validators, tokens | [reading-chain-data](docs/reading-chain-data.md) |
 | JSON-RPC | `JanzeerRpc` / `AsyncJanzeerRpc` (HTTP, batches) and `JanzeerRpcWs` (WebSocket + `newBlocks` / `addressActivity`) | [json-rpc-and-subscriptions](docs/json-rpc-and-subscriptions.md) |
-| Flows | `wait_for_finality`, `send_and_wait`, `next_nonce` (and `await_finality`, `asend_and_wait`) | [json-rpc-and-subscriptions](docs/json-rpc-and-subscriptions.md#finality) |
+| Flows | `wait_for_finality`, `send_and_wait`, `next_nonce` (and `await_finality`, `asend_and_wait`) | [json-rpc-and-subscriptions](docs/json-rpc-and-subscriptions.md#finality) / [asyncio](docs/asyncio.md) |
 | Errors | `TxRejectedError`, `NonceMismatchError`, `RateLimitedError`, `RpcError`… | [errors](docs/errors.md) |
 | Vault | `encrypt_vault` / `decrypt_vault` (PBKDF2 + AES-GCM, compatible with the other SDKs) | [vault](docs/vault.md) |
+| Asyncio | `AsyncJanzeerClient`, `AsyncJanzeerRpc`, `await_finality`, `asend_and_wait` | [asyncio](docs/asyncio.md) |
 
 ## Money is never a float
 
@@ -89,8 +90,8 @@ errors are typed classes; the package ships `py.typed`.
 ## Examples
 
 Runnable scripts in [`examples/`](examples): a transfer to finality, an address-activity subscription, a
-new-blocks subscription, the token life cycle, a validator registration, and a vault round trip. They read the
-`JANZEER_*` environment variables described in [CONTRIBUTING](CONTRIBUTING.md).
+new-blocks subscription, the token life cycle, a validator registration, a vault round trip, and an asyncio
+quickstart transfer. They read the `JANZEER_*` environment variables described in [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Conformance
 
