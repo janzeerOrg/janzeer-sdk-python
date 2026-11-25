@@ -63,7 +63,7 @@ async def main() -> None:
             if final.get("status") != "FINAL":
                 print(f"payment not final: {final.get('status')}", file=sys.stderr)
                 raise SystemExit(1)
-            print(f"paid: {reference} {invoice_amount} JNZ in block {final.get('blockHeight')}")
+            print(f"paid: {reference} {invoice_amount} JNZ in block {ev.get('blockHeight')}")
         finally:
             await sub.unsubscribe()
 

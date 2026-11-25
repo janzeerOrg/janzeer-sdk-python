@@ -3,11 +3,17 @@
 All notable changes to this package. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the package follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.9 — 2026-11-25
+
+Verified against node **0.1.15** (API 1.1.0 / protocol 3.4.0). No library change.
+
+- **Accept payment example.** `examples/08_accept_payment.py` shows accepting a payment by watching an address for a matching transfer (memo + amount), confirming finality, and exiting; README lists the example (#5).
+- `SPEC_VERSION["node"]` is **0.1.15** (node 0.1.15: consensus safety release, vote lock active from block #357,023; API 1.1.0 unchanged, wire protocol 3.4.0 until that block and 3.5.0 from it. The SDK speaks HTTP only, so nothing changes for applications).
+
 ## 0.1.8 — 2026-11-17
 
 No code change; node pin unchanged (**0.1.14**, API 1.1.0, protocol 3.4.0).
 
-- **Accept payment example.** `examples/08_accept_payment.py` shows accepting a payment by watching an address for a matching transfer (memo + amount), confirming finality, and exiting; README lists the example (#5).
 - **Arabic translation of the "Wallet and keys" guide**: [`docs/ar/wallet-and-keys.md`](docs/ar/wallet-and-keys.md) with right-to-left layout and localized technical terminology. Contributed by @genda-benjamin (#6, #9).
 
 ## 0.1.7 — 2026-11-13
