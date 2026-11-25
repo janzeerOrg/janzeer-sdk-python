@@ -89,9 +89,10 @@ errors are typed classes; the package ships `py.typed`.
 
 ## Examples
 
-Runnable scripts in [`examples/`](examples): a transfer to finality, an address-activity subscription, a
-new-blocks subscription, the token life cycle, a validator registration, a vault round trip, and an asyncio
-quickstart transfer. They read the `JANZEER_*` environment variables described in [CONTRIBUTING](CONTRIBUTING.md).
+Runnable scripts in [`examples/`](examples): a transfer to finality, an address-activity subscription, accepting
+a payment (watch an address, match memo, confirm finality), a new-blocks subscription, the token life cycle,
+a validator registration, a vault round trip, and an asyncio quickstart transfer. They read the `JANZEER_*`
+environment variables described in [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Conformance
 
